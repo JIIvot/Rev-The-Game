@@ -20,7 +20,7 @@ public class Controller {
     }
 
     private void render() {
-        BufferedImage image = new BufferedImage(SCREEN_WIDTH, SCREEN_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        var image = new BufferedImage(SCREEN_WIDTH, SCREEN_HEIGHT, BufferedImage.TYPE_INT_RGB);
         graphics = image.getGraphics();
 
         view.setImage(image);
