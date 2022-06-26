@@ -22,6 +22,8 @@ public class Controller {
     private static final String CONFIG_NAME = "rev-the-game.cfg";
 
     private static final int DELAY = 350;
+    private static final int DEFAULT_FPS = 25;
+    private static final int DEFAULT_RENDER_DELAY = 100000000 / DEFAULT_FPS;
 
     private static final Random RANDOM = new Random();
 
@@ -57,13 +59,13 @@ public class Controller {
                 Path configPath = Path.of(CONFIG_NAME);
 
                 Files.createFile(configPath);
-                Files.write(configPath, "fps=25".getBytes());
+                Files.write(configPath, ("fps=" + DEFAULT_FPS).getBytes());
             } catch (IOException e) {
                 return;
             }
 
-            fps = 25;
-            renderDelay = 4000000;
+            fps = DEFAULT_FPS;
+            renderDelay = DEFAULT_RENDER_DELAY;
         } else {
             try (FileInputStream fileInputStream = new FileInputStream(CONFIG_NAME)) {
                 config.load(fileInputStream);
@@ -80,11 +82,9 @@ public class Controller {
                 return;
             }
         }
-
         System.out.println("Started with " + fps + " " + renderDelay);
 
         view.create(SCREEN_WIDTH, SCREEN_HEIGHT);
-
         initField();
 
         new Thread(() -> {
