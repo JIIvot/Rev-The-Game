@@ -15,9 +15,9 @@ public class Controller {
 
     private static final int DELAY = 350;
 
-    private static final Random random = new Random();
+    private static final Random RANDOM = new Random();
 
-    private static final Cell[][] field = new Cell[FIELD_WIDTH][FIELD_HEIGHT];
+    private static final Cell[][] FIELD = new Cell[FIELD_WIDTH][FIELD_HEIGHT];
 
     private static final Color CELL_COLOR = Color.GRAY;
     private static final Color ALTERNATIVE_CELL_COLOR = Color.DARK_GRAY;
@@ -47,7 +47,7 @@ public class Controller {
     private void initField() {
         for (int i = 0; i < FIELD_WIDTH; i++) {
             for (int j = 0; j < FIELD_HEIGHT; j++) {
-                field[i][j] = Cell.EMPTY;
+                FIELD[i][j] = Cell.EMPTY;
             }
         }
     }
@@ -69,7 +69,7 @@ public class Controller {
     private void drawField() {
         for (int i = 0; i < FIELD_WIDTH; i++) {
             for (int j = 0; j < FIELD_HEIGHT; j++) {
-                Cell cell = field[i][j];
+                Cell cell = FIELD[i][j];
                 if (cell != Cell.EMPTY) {
                     graphics.setColor(cell == Cell.BLACK ? BLACK_COLOR : WHITE_COLOR);
                     graphics.fillOval(vtr(i), vtr(j), SQUARE_SIZE, SQUARE_SIZE);
@@ -106,8 +106,8 @@ public class Controller {
     }
 
     private void computerTurn() {
-        int posX = random.nextInt(FIELD_WIDTH);
-        int posY = random.nextInt(FIELD_HEIGHT);
+        int posX = RANDOM.nextInt(FIELD_WIDTH);
+        int posY = RANDOM.nextInt(FIELD_HEIGHT);
 
         try {
             TimeUnit.MILLISECONDS.sleep(DELAY);
@@ -115,7 +115,7 @@ public class Controller {
             e.printStackTrace();
         }
 
-        field[posX][posY] = Cell.WHITE;
+        FIELD[posX][posY] = Cell.WHITE;
         isPlayerTurn = true;
 
         render();
@@ -125,11 +125,11 @@ public class Controller {
         int posX = rtv(mouseX);
         int posY = rtv(mouseY);
 
-        if (button != 1 || !isPlayerTurn || field[posX][posY] != Cell.EMPTY) {
+        if (button != 1 || !isPlayerTurn || FIELD[posX][posY] != Cell.EMPTY) {
             return;
         }
 
-        field[posX][posY] = Cell.BLACK;
+        FIELD[posX][posY] = Cell.BLACK;
         isPlayerTurn = false;
         render();
         computerTurn();
