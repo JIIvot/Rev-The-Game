@@ -13,6 +13,8 @@ public class Controller {
     private static final int SCREEN_WIDTH = SQUARE_SIZE * FIELD_WIDTH;
     private static final int SCREEN_HEIGHT = SQUARE_SIZE * FIELD_HEIGHT;
 
+    private static final int DELAY = 350;
+
     private static final Random random = new Random();
 
     private static final Cell[][] field = new Cell[FIELD_WIDTH][FIELD_HEIGHT];
@@ -108,7 +110,7 @@ public class Controller {
         int posY = random.nextInt(FIELD_HEIGHT);
 
         try {
-            TimeUnit.MILLISECONDS.sleep(500);
+            TimeUnit.MILLISECONDS.sleep(DELAY);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
