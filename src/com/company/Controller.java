@@ -15,7 +15,7 @@ public class Controller {
 
     private static final Random random = new Random();
 
-    private static final Cell field[][] = new Cell[FIELD_WIDTH][FIELD_HEIGHT];
+    private static final Cell[][] field = new Cell[FIELD_WIDTH][FIELD_HEIGHT];
 
     private static final Color CELL_COLOR = Color.GRAY;
     private static final Color ALTERNATIVE_CELL_COLOR = Color.DARK_GRAY;
