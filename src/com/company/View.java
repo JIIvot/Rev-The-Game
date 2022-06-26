@@ -1,10 +1,7 @@
 package com.company;
 
 import javax.swing.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 public class View {
@@ -43,6 +40,13 @@ public class View {
             @Override
             public void keyPressed(KeyEvent e) {
                 controller.onKeyPress(e.getKeyCode());
+            }
+        });
+
+        frame.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                new Thread(() -> controller.onMousePress(e.getButton(), e.getX(), e.getY())).start();
             }
         });
 
