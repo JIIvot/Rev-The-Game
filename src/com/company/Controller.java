@@ -70,7 +70,6 @@ public class Controller {
             try (FileInputStream fileInputStream = new FileInputStream(CONFIG_NAME)) {
                 config.load(fileInputStream);
             } catch (IOException e) {
-                e.printStackTrace();
                 return;
             }
 
@@ -78,7 +77,6 @@ public class Controller {
                 fps = Integer.parseInt(config.getProperty("fps"));
                 renderDelay = 100000000 / fps;
             } catch (RuntimeException e) {
-                e.printStackTrace();
                 return;
             }
         }
