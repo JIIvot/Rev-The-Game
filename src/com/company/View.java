@@ -32,6 +32,6 @@ public class View {
     }
 
     public void setImage(BufferedImage image) {
-        frame.setIconImage(image);
+        label.setIcon(new ImageIcon(image));
     }
 }
