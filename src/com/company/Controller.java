@@ -3,6 +3,12 @@ package com.company;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -12,6 +18,8 @@ public class Controller {
     private static final int SQUARE_SIZE = 50;
     private static final int SCREEN_WIDTH = SQUARE_SIZE * FIELD_WIDTH;
     private static final int SCREEN_HEIGHT = SQUARE_SIZE * FIELD_HEIGHT;
+
+    private static final String CONFIG_NAME = "rev-the-game.cfg";
 
     private static final int DELAY = 350;
 
@@ -29,19 +37,67 @@ public class Controller {
 
     private Point selectedSquare = null;
     private boolean isPlayerTurn = true;
+    private boolean isRunning = true;
 
     private View view;
     private Graphics graphics;
+    private int fps;
+    private int renderDelay;
 
     public void setView(View view) {
         this.view = view;
     }
 
     public void start() {
+        Properties config = new Properties();
+        File configFile = new File(CONFIG_NAME);
+
+        if (!configFile.exists()) {
+            try {
+                Path configPath = Path.of(CONFIG_NAME);
+
+                Files.createFile(configPath);
+                Files.write(configPath, "fps=25".getBytes());
+            } catch (IOException e) {
+                return;
+            }
+
+            fps = 25;
+            renderDelay = 4000000;
+        } else {
+            try (FileInputStream fileInputStream = new FileInputStream(CONFIG_NAME)) {
+                config.load(fileInputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            try {
+                fps = Integer.parseInt(config.getProperty("fps"));
+                renderDelay = 100000000 / fps;
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        System.out.println("Started with " + fps + " " + renderDelay);
+
         view.create(SCREEN_WIDTH, SCREEN_HEIGHT);
 
         initField();
-        render();
+
+        new Thread(() -> {
+            while (isRunning) {
+                render();
+
+                try {
+                    TimeUnit.NANOSECONDS.sleep(renderDelay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private void initField() {
@@ -101,7 +157,6 @@ public class Controller {
 
         if (!currentLocation.equals(selectedSquare)) {
             selectedSquare = currentLocation;
-            render();
         }
     }
 
@@ -117,8 +172,6 @@ public class Controller {
 
         FIELD[posX][posY] = Cell.WHITE;
         isPlayerTurn = true;
-
-        render();
     }
 
     public void onMousePress(int button, int mouseX, int mouseY) {
@@ -131,12 +184,12 @@ public class Controller {
 
         FIELD[posX][posY] = Cell.BLACK;
         isPlayerTurn = false;
-        render();
         computerTurn();
     }
 
     public void onKeyPress(int keycode) {
         if (keycode == KeyEvent.VK_ESCAPE) {
+            isRunning = false;
             view.close();
         }
     }
