@@ -1,6 +1,8 @@
 package com.company;
 
 import javax.swing.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 
 public class View {
@@ -27,6 +29,13 @@ public class View {
         label = new JLabel();
         label.setBounds(0, 0, width, height);
         frame.add(label);
+
+        frame.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                controller.onMouseMotion(e.getX(), e.getY());
+            }
+        });
 
         frame.setVisible(true);
     }

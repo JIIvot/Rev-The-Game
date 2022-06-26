@@ -13,6 +13,10 @@ public class Controller {
     private static final Color CELL_COLOR = Color.GRAY;
     private static final Color ALTERNATIVE_CELL_COLOR = Color.DARK_GRAY;
 
+    private static final Color SELECTED_COLOR = new Color(0, 0, 0, 0.3f);
+
+    private Point selectedSquare = null;
+
     private View view;
     private Graphics graphics;
 
@@ -27,12 +31,21 @@ public class Controller {
     }
 
     private void render() {
-        var image = new BufferedImage(SCREEN_WIDTH, SCREEN_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        var image = new BufferedImage(SCREEN_WIDTH, SCREEN_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         graphics = image.getGraphics();
 
         drawBackground();
 
+        if (selectedSquare != null) {
+            drawSelected();
+        }
+
         view.setImage(image);
+    }
+
+    private void drawSelected() {
+        graphics.setColor(SELECTED_COLOR);
+        graphics.fillRect(vtr(selectedSquare.x), vtr(selectedSquare.y), SQUARE_SIZE, SQUARE_SIZE);
     }
 
     private void drawBackground() {
@@ -45,6 +58,15 @@ public class Controller {
                 currentColor = !currentColor;
             }
             currentColor = !currentColor;
+        }
+    }
+
+    public void onMouseMotion(int mouseX, int mouseY) {
+        Point currentLocation = new Point(rtv(mouseX), rtv(mouseY));
+
+        if (!currentLocation.equals(selectedSquare)) {
+            selectedSquare = currentLocation;
+            render();
         }
     }
 
