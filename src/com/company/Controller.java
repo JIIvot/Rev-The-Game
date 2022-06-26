@@ -20,8 +20,8 @@ public class Controller {
     private static final Color CELL_COLOR = Color.GRAY;
     private static final Color ALTERNATIVE_CELL_COLOR = Color.DARK_GRAY;
 
-    private static final Color WHITE_COLOR = new Color(1f, 1f, 1f, 0.8f);
-    private static final Color BLACK_COLOR = new Color(0f, 0f, 0f, 0.8f);
+    private static final Color WHITE_COLOR = new Color(1f, 1f, 1f, 0.75f);
+    private static final Color BLACK_COLOR = new Color(0f, 0f, 0f, 0.75f);
 
     private static final Color SELECTED_COLOR = new Color(0f, 0f, 0f, 0.3f);
 
