@@ -1,6 +1,7 @@
 package com.company;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 public class Controller {
@@ -67,6 +68,12 @@ public class Controller {
         if (!currentLocation.equals(selectedSquare)) {
             selectedSquare = currentLocation;
             render();
+        }
+    }
+
+    public void onKeyPress(int keycode) {
+        if (keycode == KeyEvent.VK_ESCAPE) {
+            view.close();
         }
     }
 
