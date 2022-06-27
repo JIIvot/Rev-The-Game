@@ -3,11 +3,6 @@ package com.company;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -18,13 +13,9 @@ public class Controller {
     private static final int SCREEN_WIDTH = SQUARE_SIZE * FIELD_WIDTH;
     private static final int SCREEN_HEIGHT = SQUARE_SIZE * FIELD_HEIGHT;
 
-    private static final String CONFIG_NAME = "rev-the-game.cfg";
-
     private static final int MILLISECONDS_IN_SECOND = 1000;
 
     private static final int DELAY = 350;
-    private static final int DEFAULT_FPS = 25;
-    private static final int DEFAULT_RENDER_DELAY = MILLISECONDS_IN_SECOND / DEFAULT_FPS;
 
     private static final Random RANDOM = new Random();
 
@@ -44,7 +35,6 @@ public class Controller {
 
     private View view;
     private Graphics graphics;
-    private int fps;
     private int renderDelay;
 
     public void setView(View view) {
@@ -52,48 +42,15 @@ public class Controller {
     }
 
     public void start() {
-        if (!readConfig(Path.of(CONFIG_NAME))) {
+        if (!Config.readConfig()) {
             return;
         }
 
-        System.out.println("Started with: " + fps + " " + renderDelay);
+        renderDelay = MILLISECONDS_IN_SECOND / Config.getFps();
         view.create(SCREEN_WIDTH, SCREEN_HEIGHT);
 
         initField();
         startRendering();
-    }
-
-    private boolean readConfig(Path path) {
-        if (Files.notExists(path)) {
-            try {
-                createConfig(path);
-            } catch (IOException e) {
-                return false;
-            }
-
-            fps = DEFAULT_FPS;
-            renderDelay = DEFAULT_RENDER_DELAY;
-        } else {
-            Properties config = new Properties();
-
-            try (FileInputStream fileInputStream = new FileInputStream(CONFIG_NAME)) {
-                config.load(fileInputStream);
-            } catch (IOException e) {
-                return false;
-            }
-
-            try {
-                fps = Integer.parseInt(config.getProperty("fps"));
-                renderDelay = MILLISECONDS_IN_SECOND / fps;
-            } catch (RuntimeException e) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void createConfig(Path path) throws IOException {
-        Files.write(path, ("fps=" + DEFAULT_FPS).getBytes());
     }
 
     private void startRendering() {
@@ -118,6 +75,11 @@ public class Controller {
                 FIELD[i][j] = Cell.EMPTY;
             }
         }
+
+        FIELD[FIELD_WIDTH / 2][FIELD_HEIGHT / 2] = Cell.WHITE;
+        FIELD[FIELD_WIDTH / 2][FIELD_HEIGHT / 2 - 1] = Cell.BLACK;
+        FIELD[FIELD_WIDTH / 2 - 1][FIELD_HEIGHT / 2] = Cell.BLACK;
+        FIELD[FIELD_WIDTH / 2 - 1][FIELD_HEIGHT / 2 - 1] = Cell.WHITE;
     }
 
     private void render() {
