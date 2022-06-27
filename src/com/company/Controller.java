@@ -3,7 +3,6 @@ package com.company;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,11 +20,11 @@ public class Controller {
 
     private static final String CONFIG_NAME = "rev-the-game.cfg";
 
-    private static final int NANOSECONDS_IN_SECOND = 1_000_000_000;
+    private static final int MILLISECONDS_IN_SECOND = 1000;
 
     private static final int DELAY = 350;
     private static final int DEFAULT_FPS = 25;
-    private static final int DEFAULT_RENDER_DELAY = NANOSECONDS_IN_SECOND / DEFAULT_FPS;
+    private static final int DEFAULT_RENDER_DELAY = MILLISECONDS_IN_SECOND / DEFAULT_FPS;
 
     private static final Random RANDOM = new Random();
 
@@ -85,7 +84,7 @@ public class Controller {
 
             try {
                 fps = Integer.parseInt(config.getProperty("fps"));
-                renderDelay = NANOSECONDS_IN_SECOND / fps;
+                renderDelay = MILLISECONDS_IN_SECOND / fps;
             } catch (RuntimeException e) {
                 return false;
             }
@@ -99,13 +98,15 @@ public class Controller {
 
     private void startRendering() {
         new Thread(() -> {
+            boolean needRender;
+            long lastTimeRender = 0;
             while (isRunning) {
-                render();
+                long currentTime = System.currentTimeMillis();
+                needRender = (currentTime - lastTimeRender) >= renderDelay;
 
-                try {
-                    TimeUnit.NANOSECONDS.sleep(renderDelay);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if (needRender) {
+                    lastTimeRender = currentTime;
+                    render();
                 }
             }
         }).start();
