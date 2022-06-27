@@ -21,9 +21,11 @@ public class Controller {
 
     private static final String CONFIG_NAME = "rev-the-game.cfg";
 
+    private static final int NANOSECONDS_IN_SECOND = 1_000_000_000;
+
     private static final int DELAY = 350;
     private static final int DEFAULT_FPS = 25;
-    private static final int DEFAULT_RENDER_DELAY = 100000000 / DEFAULT_FPS;
+    private static final int DEFAULT_RENDER_DELAY = NANOSECONDS_IN_SECOND / DEFAULT_FPS;
 
     private static final Random RANDOM = new Random();
 
@@ -51,40 +53,51 @@ public class Controller {
     }
 
     public void start() {
-        Properties config = new Properties();
-        File configFile = new File(CONFIG_NAME);
+        if (!readConfig(Path.of(CONFIG_NAME))) {
+            return;
+        }
 
-        if (!configFile.exists()) {
+        System.out.println("Started with: " + fps + " " + renderDelay);
+        view.create(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        initField();
+        startRendering();
+    }
+
+    private boolean readConfig(Path path) {
+        if (Files.notExists(path)) {
             try {
-                Path configPath = Path.of(CONFIG_NAME);
-
-                Files.createFile(configPath);
-                Files.write(configPath, ("fps=" + DEFAULT_FPS).getBytes());
+                createConfig();
             } catch (IOException e) {
-                return;
+                return false;
             }
 
             fps = DEFAULT_FPS;
             renderDelay = DEFAULT_RENDER_DELAY;
         } else {
+            Properties config = new Properties();
+
             try (FileInputStream fileInputStream = new FileInputStream(CONFIG_NAME)) {
                 config.load(fileInputStream);
             } catch (IOException e) {
-                return;
+                return false;
             }
 
             try {
                 fps = Integer.parseInt(config.getProperty("fps"));
-                renderDelay = 100000000 / fps;
+                renderDelay = NANOSECONDS_IN_SECOND / fps;
             } catch (RuntimeException e) {
-                return;
+                return false;
             }
         }
-        System.out.println("Started with " + fps + " " + renderDelay);
+        return true;
+    }
 
-        view.create(SCREEN_WIDTH, SCREEN_HEIGHT);
-        initField();
+    private void createConfig() throws IOException {
+        Files.write(Path.of(CONFIG_NAME), ("fps=" + DEFAULT_FPS).getBytes());
+    }
 
+    private void startRendering() {
         new Thread(() -> {
             while (isRunning) {
                 render();
