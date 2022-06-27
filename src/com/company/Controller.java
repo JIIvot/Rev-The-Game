@@ -66,7 +66,7 @@ public class Controller {
     private boolean readConfig(Path path) {
         if (Files.notExists(path)) {
             try {
-                createConfig();
+                createConfig(path);
             } catch (IOException e) {
                 return false;
             }
@@ -92,8 +92,8 @@ public class Controller {
         return true;
     }
 
-    private void createConfig() throws IOException {
-        Files.write(Path.of(CONFIG_NAME), ("fps=" + DEFAULT_FPS).getBytes());
+    private void createConfig(Path path) throws IOException {
+        Files.write(path, ("fps=" + DEFAULT_FPS).getBytes());
     }
 
     private void startRendering() {
